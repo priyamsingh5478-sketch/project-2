@@ -1,6 +1,6 @@
 # project-2
  Enterprise CRM System
-
+ enterprise CRM system is a highly scalable platform designed for large organizationsA
 Objective:
 Develop a CRM for managing leads, customers, and sales pipelines.
 
