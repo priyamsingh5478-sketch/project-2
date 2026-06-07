@@ -1,4 +1,4 @@
-// ======================= DATA MODELS =======================
+// ======================= DATA MODELS (Enhanced) =======================
 const stages = [
   { name: 'New Lead', color: '#64748b', deals: [{ name: 'Brightfield AI', val: '$45K', prob: '15%', rep: 'JK' }, { name: 'Orion Health', val: '$32K', prob: '20%', rep: 'PN' }, { name: 'ClearPath SaaS', val: '$28K', prob: '10%', rep: 'TW' }] },
   { name: 'Qualified', color: '#6366f1', deals: [{ name: 'Nexus Retail', val: '$88K', prob: '35%', rep: 'JK' }, { name: 'Stratagen Corp', val: '$65K', prob: '40%', rep: 'AT' }, { name: 'BluePoint Tech', val: '$52K', prob: '45%', rep: 'PN' }] },
@@ -8,12 +8,12 @@ const stages = [
 ];
 
 let leads = [
-  { name: 'Rachel Torres', company: 'Vertex AI', source: 'LinkedIn', score: 92, status: 'qualified', rep: 'James Kim', date: 'Jun 1' },
-  { name: 'Marcus Chen', company: 'Datastream', source: 'Website', score: 78, status: 'contacted', rep: 'Priya Nair', date: 'Jun 2' },
-  { name: 'Sophie Laurent', company: 'CloudNine', source: 'Referral', score: 85, status: 'new', rep: 'Tom Walsh', date: 'Jun 3' },
-  { name: 'Ahmed Hassan', company: 'FinTech Pro', source: 'Cold Outreach', score: 61, status: 'new', rep: 'Aiko Tanaka', date: 'Jun 4' },
-  { name: 'Lena Kovacs', company: 'MedTech EU', source: 'Website', score: 73, status: 'contacted', rep: 'James Kim', date: 'Jun 5' },
-  { name: 'Derek Okafor', company: 'BuildFast', source: 'LinkedIn', score: 89, status: 'qualified', rep: 'Priya Nair', date: 'Jun 5' }
+  { name: 'Rachel Torres', company: 'Vertex AI', source: 'LinkedIn', score: 92, status: 'qualified', rep: 'James Kim', date: 'Jun 1', email: 'rachel@vertex.ai', phone: '+1 (555) 123-4567', value: '$45K' },
+  { name: 'Marcus Chen', company: 'Datastream', source: 'Website', score: 78, status: 'contacted', rep: 'Priya Nair', date: 'Jun 2', email: 'marcus@datastream.com', phone: '+1 (555) 234-5678', value: '$32K' },
+  { name: 'Sophie Laurent', company: 'CloudNine', source: 'Referral', score: 85, status: 'new', rep: 'Tom Walsh', date: 'Jun 3', email: 'sophie@cloudnine.com', phone: '+1 (555) 345-6789', value: '$28K' },
+  { name: 'Ahmed Hassan', company: 'FinTech Pro', source: 'Cold Outreach', score: 61, status: 'new', rep: 'Aiko Tanaka', date: 'Jun 4', email: 'ahmed@fintechpro.com', phone: '+1 (555) 456-7890', value: '$22K' },
+  { name: 'Lena Kovacs', company: 'MedTech EU', source: 'Website', score: 73, status: 'contacted', rep: 'James Kim', date: 'Jun 5', email: 'lena@medtecheu.com', phone: '+1 (555) 567-8901', value: '$38K' },
+  { name: 'Derek Okafor', company: 'BuildFast', source: 'LinkedIn', score: 89, status: 'qualified', rep: 'Priya Nair', date: 'Jun 5', email: 'derek@buildfast.com', phone: '+1 (555) 678-9012', value: '$67K' }
 ];
 
 const customers = [
@@ -21,7 +21,7 @@ const customers = [
   { name: 'SolarTech EU', mrr: '$22,000', industry: 'Energy', health: 88, tier: 'Enterprise', csm: 'James Kim', since: 'Mar 2023' }
 ];
 
-const activities = [
+let activities = [
   { type: 'email', icon: '📧', color: '#3b82f618', text: 'Sent proposal to Rachel Torres', time: '2 min ago' },
   { type: 'call', icon: '📞', color: '#10b98118', text: 'Discovery call with Marcus Chen', time: '1h ago' }
 ];
@@ -41,11 +41,106 @@ const perfData = [
   { name: 'Priya Nair', won: 11, rev: '$335,000', quota: 78, avg: '$30.5K', win: 69, status: 'On Track' }
 ];
 
-const emails = [
-  { to: 'Rachel Torres', subject: 'Proposal', status: 'Opened', opens: 3, time: '10:22 AM' }
+let emails = [
+  { to: 'Rachel Torres', subject: 'Proposal for Vertex AI', status: 'Opened', opens: 3, time: '10:22 AM' }
 ];
 
-// ======================= RENDER FUNCTIONS =======================
+// ======================= ENHANCED FUNCTIONS =======================
+function showNotification(message, type = 'success') {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+    <div style="position:fixed;top:20px;right:20px;background:${type === 'success' ? '#10b981' : '#ef4444'};color:white;padding:12px 20px;border-radius:8px;z-index:1000;animation:slideIn 0.3s ease">
+      ${message}
+    </div>
+  `;
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 3000);
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem('crm_leads', JSON.stringify(leads));
+  localStorage.setItem('crm_activities', JSON.stringify(activities));
+  showNotification('Data saved successfully!');
+}
+
+function loadFromLocalStorage() {
+  const savedLeads = localStorage.getItem('crm_leads');
+  const savedActivities = localStorage.getItem('crm_activities');
+  if (savedLeads) leads = JSON.parse(savedLeads);
+  if (savedActivities) activities = JSON.parse(savedActivities);
+}
+
+// Export functionality
+function exportToCSV() {
+  const headers = ['Name', 'Company', 'Source', 'Score', 'Status', 'Rep', 'Date', 'Email', 'Phone', 'Value'];
+  const csvData = leads.map(lead => [
+    lead.name, lead.company, lead.source, lead.score, 
+    lead.status, lead.rep, lead.date, lead.email || '', 
+    lead.phone || '', lead.value || ''
+  ]);
+  
+  const csvContent = [headers, ...csvData].map(row => row.join(',')).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `crm_leads_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showNotification('CSV exported successfully!');
+}
+
+// Search functionality
+function searchLeads(query) {
+  if (!query) return renderLeads('all');
+  const filtered = leads.filter(lead => 
+    lead.name.toLowerCase().includes(query.toLowerCase()) ||
+    lead.company.toLowerCase().includes(query.toLowerCase()) ||
+    lead.email?.toLowerCase().includes(query.toLowerCase())
+  );
+  const tbody = document.getElementById('leads-tbody');
+  tbody.innerHTML = filtered.map(l => renderLeadRow(l)).join('');
+}
+
+function renderLeadRow(l) {
+  return `<tr>
+    <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;background:#6366f120">${l.name[0]}</div>${l.name}</div></td>
+    <td>${l.company}</td><td><span class="badge badge-gray">${l.source}</span></td>
+    <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${l.score}%;background:#10b981"></div></div>${l.score}</div></td>
+    <td><span class="badge badge-blue">${l.status}</span></td><td>${l.rep}</td><td>${l.date}</td>
+    <td><button class="btn btn-ghost" onclick="editLead('${l.name}')" style="padding:3px 8px">Edit</button>
+      <button class="btn btn-ghost" onclick="deleteLead('${l.name}')" style="padding:3px 8px;color:#ef4444">Delete</button></td>
+  </tr>`;
+}
+
+function editLead(name) {
+  const lead = leads.find(l => l.name === name);
+  if (lead) {
+    document.getElementById('leadFirstName').value = lead.name.split(' ')[0];
+    document.getElementById('leadLastName').value = lead.name.split(' ')[1] || '';
+    document.getElementById('leadCompany').value = lead.company;
+    document.getElementById('leadEmail').value = lead.email || '';
+    document.getElementById('leadPhone').value = lead.phone || '';
+    document.getElementById('leadSource').value = lead.source;
+    document.getElementById('leadValue').value = lead.value || '';
+    document.getElementById('leadAssign').value = lead.rep;
+    openModal();
+    // Remove old lead, add updated one on save
+    window.editingLead = name;
+  }
+}
+
+function deleteLead(name) {
+  if (confirm(`Are you sure you want to delete ${name}?`)) {
+    leads = leads.filter(l => l.name !== name);
+    renderLeads('all');
+    saveToLocalStorage();
+    showNotification(`${name} deleted successfully!`);
+  }
+}
+
+// Enhanced revenue chart with tooltips
 function renderRevenueChart() {
   const revenue = [142, 168, 195, 183, 221, 248, 210, 265, 241, 274, 284];
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
@@ -57,6 +152,7 @@ function renderRevenueChart() {
     bar.className = 'bar';
     bar.style.height = Math.max(8, (v / max) * 90) + 'px';
     bar.style.background = '#6366f1';
+    bar.title = `${months[i]}: $${v}K`;
     bar.innerHTML = `<span class="bar-label">${months[i]}</span>`;
     container.appendChild(bar);
   });
@@ -69,21 +165,23 @@ function renderPipeline() {
     const col = document.createElement('div');
     col.className = 'pipeline-col';
     col.innerHTML = `<div class="pipeline-col-header"><span style="color:${s.color}">${s.name}</span><span class="stage-count">${s.deals.length}</span></div>` +
-      s.deals.map(d => `<div class="deal-card"><div class="deal-name">${d.name}</div><div class="deal-meta"><span class="deal-value">${d.val}</span><span class="deal-prob">${d.prob}</span><div class="deal-avatar" style="background:${s.color}20">${d.rep}</div></div></div>`).join('');
+      s.deals.map(d => `<div class="deal-card" onclick="moveDeal('${d.name}')"><div class="deal-name">${d.name}</div><div class="deal-meta"><span class="deal-value">${d.val}</span><span class="deal-prob">${d.prob}</span><div class="deal-avatar" style="background:${s.color}20">${d.rep}</div></div></div>`).join('');
     board.appendChild(col);
   });
+}
+
+function moveDeal(dealName) {
+  const newStage = prompt('Move to stage: (New Lead, Qualified, Proposal, Negotiation, Closed Won)');
+  if (newStage) {
+    showNotification(`${dealName} moved to ${newStage}`, 'success');
+  }
 }
 
 function renderLeads(filter = 'all') {
   const filtered = filter === 'all' ? leads : leads.filter(l => l.status === filter);
   const tbody = document.getElementById('leads-tbody');
-  tbody.innerHTML = filtered.map(l => `<tr>
-    <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;background:#6366f120">${l.name[0]}</div>${l.name}</div></td>
-    <td>${l.company}</td><td><span class="badge badge-gray">${l.source}</span></td>
-    <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${l.score}%;background:#10b981"></div></div>${l.score}</div></td>
-    <td><span class="badge badge-blue">${l.status}</span></td><td>${l.rep}</td><td>${l.date}</td>
-    <td><button class="btn btn-ghost" style="padding:3px 8px">Edit</button></td>
-  </tr>`).join('');
+  tbody.innerHTML = filtered.map(l => renderLeadRow(l)).join('');
+  updateStats();
 }
 
 function renderCustomers() {
@@ -109,7 +207,7 @@ function renderActivityLog(filter = 'all') {
 
 function renderEmailTracker() {
   const container = document.getElementById('email-tracker');
-  container.innerHTML = emails.map(e => `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div><strong>${e.to}</strong> <span class="badge badge-green">${e.status}</span></div><div style="font-size:11px">${e.subject}</div></div>`).join('');
+  container.innerHTML = emails.map(e => `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div><strong>${e.to}</strong> <span class="badge badge-green">${e.status}</span> <span style="font-size:11px">Opens: ${e.opens}</span></div><div style="font-size:11px">${e.subject}</div><div style="font-size:10px;color:var(--text3)">${e.time}</div></div>`).join('');
 }
 
 function renderPerfTable() {
@@ -122,6 +220,104 @@ function renderTeam() {
   tbody.innerHTML = team.map(t => `<tr><td>${t.name}</td><td>${t.role}</td><td>${t.dept}</td><td>${t.perms}</td><td>${t.last}</td><td><span class="badge badge-green">${t.status}</span></td></tr>`).join('');
 }
 
+function updateStats() {
+  const totalLeads = leads.length;
+  const qualifiedLeads = leads.filter(l => l.status === 'qualified').length;
+  const avgScore = Math.round(leads.reduce((sum, l) => sum + l.score, 0) / totalLeads);
+  
+  const statsContainer = document.querySelector('#page-leads .filter-bar');
+  if (statsContainer && !statsContainer.querySelector('.lead-stats')) {
+    const statsSpan = document.createElement('span');
+    statsSpan.className = 'lead-stats';
+    statsSpan.style.marginLeft = 'auto';
+    statsSpan.innerHTML = `<strong>${totalLeads}</strong> total | <strong>${qualifiedLeads}</strong> qualified | avg score: <strong>${avgScore}</strong>`;
+    statsContainer.appendChild(statsSpan);
+  }
+}
+
+// ======================= ENHANCED LEAD CREATION =======================
+function openModal() { 
+  document.getElementById('modal').classList.add('open');
+  window.editingLead = null;
+}
+
+function closeModal() { 
+  document.getElementById('modal').classList.remove('open');
+  // Clear form
+  document.getElementById('leadFirstName').value = '';
+  document.getElementById('leadLastName').value = '';
+  document.getElementById('leadCompany').value = '';
+  document.getElementById('leadEmail').value = '';
+  document.getElementById('leadPhone').value = '';
+  document.getElementById('leadValue').value = '';
+}
+
+function addNewLead() {
+  const firstName = document.getElementById('leadFirstName').value;
+  const lastName = document.getElementById('leadLastName').value;
+  const company = document.getElementById('leadCompany').value;
+  const email = document.getElementById('leadEmail').value;
+  const phone = document.getElementById('leadPhone').value;
+  const value = document.getElementById('leadValue').value;
+  
+  if (!firstName || !company) {
+    showNotification('Please fill in required fields (First Name and Company)', 'error');
+    return;
+  }
+  
+  const fullName = `${firstName} ${lastName}`.trim();
+  
+  if (window.editingLead) {
+    // Update existing lead
+    const index = leads.findIndex(l => l.name === window.editingLead);
+    if (index !== -1) {
+      leads[index] = {
+        ...leads[index],
+        name: fullName,
+        company: company,
+        source: document.getElementById('leadSource').value,
+        rep: document.getElementById('leadAssign').value,
+        email: email,
+        phone: phone,
+        value: value
+      };
+      showNotification(`${fullName} updated successfully!`);
+    }
+    window.editingLead = null;
+  } else {
+    // Add new lead
+    const newLead = {
+      name: fullName,
+      company: company,
+      source: document.getElementById('leadSource').value,
+      score: Math.floor(Math.random() * 40) + 50,
+      status: 'new',
+      rep: document.getElementById('leadAssign').value,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      email: email,
+      phone: phone,
+      value: value || '$0'
+    };
+    leads.unshift(newLead);
+    
+    // Add activity log
+    activities.unshift({
+      type: 'note',
+      icon: '📝',
+      color: '#f59e0b18',
+      text: `New lead added: ${fullName} from ${company}`,
+      time: 'Just now'
+    });
+    
+    showNotification(`${fullName} added successfully!`);
+  }
+  
+  renderLeads('all');
+  renderRecentActivity();
+  saveToLocalStorage();
+  closeModal();
+}
+
 // ======================= NAVIGATION =======================
 const pageTitles = { dashboard: 'Dashboard', pipeline: 'Pipeline', leads: 'Leads', customers: 'Customers', performance: 'Performance', activities: 'Activities', roles: 'Team & Roles' };
 
@@ -131,36 +327,18 @@ function navigateTo(page) {
   document.getElementById(`page-${page}`).classList.add('active');
   document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
   document.getElementById('page-title').innerText = pageTitles[page];
+  
   const actionBtn = document.getElementById('dynamic-action-btn');
-  if (page === 'leads') actionBtn.innerText = '+ Add Lead';
-  else actionBtn.innerText = '+ Create';
-}
-
-// ======================= MODAL & LEAD CREATION =======================
-function openModal() { document.getElementById('modal').classList.add('open'); }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function addNewLead() {
-  const firstName = document.getElementById('leadFirstName').value;
-  const lastName = document.getElementById('leadLastName').value;
-  const company = document.getElementById('leadCompany').value;
-  if (!firstName || !company) return;
-  const newLead = {
-    name: `${firstName} ${lastName}`,
-    company: company,
-    source: document.getElementById('leadSource').value,
-    score: Math.floor(Math.random() * 40) + 50,
-    status: 'new',
-    rep: document.getElementById('leadAssign').value,
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  };
-  leads.unshift(newLead);
-  renderLeads('all');
-  closeModal();
-  document.querySelector('[data-lead-filter="all"]').click();
-  document.getElementById('leadFirstName').value = '';
-  document.getElementById('leadLastName').value = '';
-  document.getElementById('leadCompany').value = '';
+  if (page === 'leads') {
+    actionBtn.innerText = '+ Add Lead';
+    actionBtn.onclick = openModal;
+  } else if (page === 'activities') {
+    actionBtn.innerText = '+ Log Activity';
+    actionBtn.onclick = () => showNotification('Activity logging feature coming soon!');
+  } else {
+    actionBtn.innerText = '+ Create';
+    actionBtn.onclick = openModal;
+  }
 }
 
 // ======================= EVENT LISTENERS =======================
@@ -188,11 +366,71 @@ document.querySelectorAll('[data-activity-filter]').forEach(tab => {
   });
 });
 
+// Search functionality
+const searchInput = document.querySelector('.search-box input');
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    if (document.getElementById('page-leads').classList.contains('active')) {
+      searchLeads(e.target.value);
+    }
+  });
+}
+
+// Export button
+const exportBtn = document.getElementById('importBtn');
+if (exportBtn) {
+  exportBtn.innerHTML = '📊 Export';
+  exportBtn.onclick = exportToCSV;
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'n') {
+    e.preventDefault();
+    openModal();
+  }
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    saveToLocalStorage();
+  }
+});
+
 document.getElementById('dynamic-action-btn').addEventListener('click', openModal);
 document.getElementById('confirmAddLead').addEventListener('click', addNewLead);
 document.getElementById('modal').addEventListener('click', (e) => { if (e.target === document.getElementById('modal')) closeModal(); });
 
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .deal-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .deal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+  }
+  .btn {
+    transition: all 0.2s;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  .stat-card {
+    transition: transform 0.2s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+  }
+`;
+document.head.appendChild(style);
+
 // ======================= INIT =======================
+loadFromLocalStorage();
 renderRevenueChart();
 renderPipeline();
 renderLeads();
@@ -203,3 +441,6 @@ renderActivityLog();
 renderEmailTracker();
 renderPerfTable();
 renderTeam();
+updateStats();
+
+console.log('CRM Enhanced Edition loaded! Use Ctrl+N for new lead, Ctrl+S to save');
