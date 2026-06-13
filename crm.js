@@ -1,4 +1,4 @@
-// ================ DATA MODELS (Enhanced) =====================
+// ================ DATA MODELS (Enhanced) ===================
 const stages = [
   { name: 'New Lead', color: '#64748b', deals: [{ name: 'Brightfield AI', val: '$45K', prob: '15%', rep: 'JK' }, { name: 'Orion Health', val: '$32K', prob: '20%', rep: 'PN' }, { name: 'ClearPath SaaS', val: '$28K', prob: '10%', rep: 'TW' }] },
   { name: 'Qualified', color: '#6366f1', deals: [{ name: 'Nexus Retail', val: '$88K', prob: '35%', rep: 'JK' }, { name: 'Stratagen Corp', val: '$65K', prob: '40%', rep: 'AT' }, { name: 'BluePoint Tech', val: '$52K', prob: '45%', rep: 'PN' }] },
